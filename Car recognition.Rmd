@@ -144,15 +144,25 @@ model %>% evaluate_generator(test_images,
 ```
 
 ```{r}
-test_image <- image_load('D:/OneDrive - Universidad Autónoma Latinoamericana/UNAULA/Semestre 7/Simulación/Homeworks/Final - R/test.jpg',
-                                  target_size = target_size)
-x <- image_to_array(test_image)
-x <- array_reshape(x, c(1, dim(x)))
-x <- x/255
-pred <- model %>% predict(x)
-pred <- data.frame("Parking lot" = label_list, "Probability" = t(pred))
-pred <- pred[order(pred$Probability, decreasing=T),][1:5,]
-pred$Probability <- paste(format(100*pred$Probability,2),"%")
-pred
+
+get_probability <- function(path) {
+  test_image <- image_load(path = path, target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- array_reshape(x, c(1, dim(x)))
+  x <- x/255
+  pred <- model %>% predict(x)
+  pred <- data.frame("Parking lot" = label_list, "Probability" = t(pred))
+  pred <- pred[order(pred$Probability, decreasing=T),][1:5,]
+  pred$Probability <- paste(format(100*pred$Probability,2),"%")
+  
+  return(pred)
+  
+}
+
+```
+
+```{r}
+get_probability('test/busy.png')
+get_probability('test/free.png')
 ```
 
